@@ -1,0 +1,26 @@
+name: Sync Upstream
+
+on:
+  schedule:
+    - cron: '0 3 * * 6'  # Weelkly on Saturday at 3 AM UTC
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout fork
+      uses: actions/checkout@v3
+
+    - name: Configure Git
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+
+    - name: Pull upstream changes
+      run: |
+        git remote add upstream https://github.com/macvk/dnsleaktest.git
+        git fetch upstream
+        git merge upstream/master --allow-unrelated-histories -m "Sync upstream"
+        git push origin master
